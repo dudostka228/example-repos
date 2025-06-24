@@ -1,61 +1,85 @@
 import { 
 	EventsSDK,
 	Menu,
+	Modifier,
+	Player,
 	LocalPlayer,
 	EntityManager,
 	item_armlet,
-	TickSleeper,
-	GameState
+	TickSleeper
  } from "github.com/octarine-public/wrapper/index"
 
+const Sleeper = new TickSleeper()
 
+class MyMenu {
+	public readonly State: Menu.Toggle
+	private readonly HealthThreshold: Menu.Slider
 
- const Sleeper = new TickSleeper()
+	constructor() {
+		const entry = Menu.AddEntry("Armlet Abuse")
+		const node = entry.AddNode("Settings")	
+		node.SortNodes = false
 
- const Entry = Menu.AddEntry("Armlet")
- const ArmletNode = Entry.AddNode("Armlet Abuse")
- ArmletNode.SortNodes = false
- 
- const ArmletState = ArmletNode.AddToggle("State", true)
- const HPCount    = ArmletNode.AddSlider("HP Count", 400, 1, 500, 0)
- 
- EventsSDK.on("PostDataUpdate", delta => {
-   const me = LocalPlayer?.Hero
-   if (
-	 delta === 0 ||
-	 !ArmletState.value ||
-	 !me ||
-	 !me.IsAlive ||
-	 Sleeper.Sleeping
-   ) {
-	 return
-   }
- 
-   const urnMod = me.Modifiers.find(
-	 m => m.Name === "modifier_item_urn_of_shadows_debuff"
-   )
-   if (!urnMod || urnMod.RemainingTime * 1000 > HPCount.value) {
-	 return
-   }
- 
-   const armlet = EntityManager
-	 .GetEntitiesByClass(item_armlet)
-	 .find(a => a.Owner === me)
-   if (!armlet || !armlet.CanBeCasted()) {
-	 return
-   }
- 
-   const lag     = (GameState.InputLag + GameState.IOLag) * 1000
-   const remMs   = (urnMod.RemainingTime % 1) * 1000 || 1000
-   const delayMs = Math.max(remMs - lag - 50, 0)
- 
-   setTimeout(() => {
-	 me.CastToggle(armlet)
-	 me.CastToggle(armlet)
-	 Sleeper.Sleep(100)
-   }, delayMs)
- })
- 
- EventsSDK.on("GameEnded", () => {
-   Sleeper.ResetTimer()
- })
+		this.State = entry.AddToggle("Enable", true)
+
+		this.HealthThreshold = entry.AddSlider("HP Count", 400, 1, 500, 0)
+
+		EventsSDK.on("PostDataUpdate", this.onUpdate.bind(this))
+		EventsSDK.on("ModifierCreated", this.onModifierCreated.bind(this))
+	}
+	private onUpdate(delta: number) {
+		if (delta === 0 || !this.State.value || Sleeper.Sleeping) {
+		  return
+		}
+	
+		const me = LocalPlayer as Player
+		if (!me?.Hero || !me.Hero.IsAlive) {
+		  return
+		}
+	
+		const hpPct = (me.HP / me.MaxHP) * 100
+		if (hpPct <= this.HealthThreshold.value) {
+		  this.abuseArmlet()
+		}
+	  }
+	
+	private onModifierCreated(mod: Modifier) {
+		if (!this.State.value) {
+		  return
+		}
+	
+		if (typeof (mod as any).IsDebuff === "function" && (mod as any).IsDebuff()) {
+		  this.abuseArmlet()
+		}
+	}
+	
+	  private abuseArmlet() {
+		if (Sleeper.Sleeping) {
+		  return
+		}
+	
+		const me   = LocalPlayer as Player
+		const arm  = EntityManager
+		  .GetEntitiesByClass(item_armlet)
+		  .find(a => a.Owner === me)
+		if (!arm || !arm.CanBeCasted()) {
+		  return
+		}
+	
+		const isOn = arm.IsToggled
+	
+		me.CastToggle(arm)
+		const cdMs = arm.ToggleCooldown * 1000
+		const buffDelayMs = 600
+		const totalDelay = cdMs + buffDelayMs
+	
+		Sleeper.Sleep(totalDelay)
+	
+		setTimeout(() => {
+		  me.CastToggle(arm)
+		  Sleeper.Sleep(200)
+		}, totalDelay)
+	  }
+}
+	
+new MyMenu()
