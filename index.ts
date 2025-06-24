@@ -22,7 +22,7 @@ class MyMenu {
 			console.log("scrpt activated:", t.value)
 		})
 
-		this.slider = entry.AddSlider("Слайдер с числами", 5, 0, 100, 1)
+		this.slider = entry.AddSlider("Слайдер с числами", 400, 2, 500, 1)
 
 		this.slider.IsHidden = false
 
