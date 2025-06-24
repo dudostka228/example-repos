@@ -2,9 +2,7 @@ import {
 	EventsSDK,
 	Menu,
 	Modifier,
-	Player,
 	LocalPlayer,
-	EntityManager,
 	item_armlet,
 	TickSleeper
  } from "github.com/octarine-public/wrapper/index"
@@ -32,7 +30,7 @@ class MyMenu {
 		  return
 		}
 	
-		const me = LocalPlayer as Player
+		const me   = LocalPlayer?.Hero
 		if (!me?.Hero || !me.Hero.IsAlive) {
 		  return
 		}
