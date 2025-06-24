@@ -58,15 +58,11 @@ class MyMenu {
 		  return
 		}
 	
-		const me   = LocalPlayer as Player
-		const arm  = EntityManager
-		  .GetEntitiesByClass(item_armlet)
-		  .find(a => a.Owner === me)
+		const me   = LocalPlayer?.Hero
+		const arm = me.GetItemByClass(item_armlet)
 		if (!arm || !arm.CanBeCasted()) {
 		  return
 		}
-	
-		const isOn = arm.IsToggled
 	
 		me.CastToggle(arm)
 		const cdMs = arm.ToggleCooldown * 1000
