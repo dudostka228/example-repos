@@ -10,26 +10,24 @@ EventsSDK.on("GameStarted", () => {
 class MyMenu {
 	public readonly State: Menu.Toggle
 	private readonly slider: Menu.Slider
-	private readonly selector: Menu.ImageSelector
 
 	constructor() {
-		const entry = Menu.AddEntry("Имя гл.подпункта")
+		const entry = Menu.AddEntry("Armlet Abuse")
 
 		const node = entry.AddNode("Имя Подпункта")
 		node.SortNodes = false
 
-		this.State = node.AddToggle("Включить", false)
+		this.State = node.AddToggle("Включить", true)
+		this.State.OnValue(t => {
+			console.log("scrpt activated:", t.value)
+		})
 
 		this.slider = node.AddSlider("Слайдер с числами", 5, 0, 100, 1)
 
-		this.selector = node.AddImageSelector("Элемент", [])
-
 		this.slider.IsHidden = false
-		this.selector.IsHidden = false
 
 		this.State.OnValue((call) => {
 			this.slider.IsHidden = !call.value
-			this.selector.IsHidden = !call.value
 		})
 	}
 
