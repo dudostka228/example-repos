@@ -32,3 +32,5 @@ class MyMenu {
 	}
 
 }
+
+new MyMenu()
