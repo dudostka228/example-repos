@@ -14,15 +14,15 @@ class MyMenu {
 	constructor() {
 		const entry = Menu.AddEntry("Armlet Abuse")
 
-		const node = entry.AddNode("Имя Подпункта")
-		node.SortNodes = false
+		// const node = entry.AddNode("HP Count")	
+		// node.SortNodes = false
 
-		this.State = node.AddToggle("Включить", true)
+		this.State = entry.AddToggle("Включить", true)
 		this.State.OnValue(t => {
 			console.log("scrpt activated:", t.value)
 		})
 
-		this.slider = node.AddSlider("Слайдер с числами", 5, 0, 100, 1)
+		this.slider = entry.AddSlider("Слайдер с числами", 5, 0, 100, 1)
 
 		this.slider.IsHidden = false
 
