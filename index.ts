@@ -13,7 +13,6 @@ const Sleeper = new TickSleeper()
 class MyMenu {
 	public readonly State: Menu.Toggle
 	private readonly HealthThreshold: Menu.Slider
-	private lastShouldBeActive: boolean | null = null
 
 	constructor() {
 		const entry = Menu.AddEntry("Armlet Abuse")
@@ -37,22 +36,10 @@ class MyMenu {
 		const hp = me.HP
 		const threshold = this.HealthThreshold.value
 		const isArmletActive = arm.IsToggled
-		const shouldBeActive = hp < threshold
 
-		if (this.lastShouldBeActive === null) {
-			this.lastShouldBeActive = shouldBeActive;
-			return;
-		}
-
-		if (shouldBeActive !== this.lastShouldBeActive) {
-			if (shouldBeActive && !isArmletActive) {
-			  me.CastToggle(arm);
-			  Sleeper.Sleep(600);
-			} else if (!shouldBeActive && isArmletActive) {
-			  me.CastToggle(arm);
-			  Sleeper.Sleep(600);
-			}
-			this.lastShouldBeActive = shouldBeActive;
+		if (hp <= threshold && !Sleeper.Sleeping) {
+			me.CastToggle(arm)
+			Sleeper.Sleep(600)
 		}
 	}
 }
