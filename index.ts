@@ -37,12 +37,23 @@ class MyMenu {
 		if (!me || !me.IsAlive) {
 			return
 		}
+
+		if (this.armletPhase === 1 && !Sleeper.Sleeping) {
+			const arm = me.GetItemByClass(item_armlet)
+			if (arm && arm.CanBeCasted()) {
+				me.CastToggle(arm)
+			}
+			this.armletPhase = 0
+		}
+
 		const HPThreshold = me.HP
 		console.log(HPThreshold)
 		if (400 >= HPThreshold) {
 			this.abuseArmlet()
 		}
 	}
+
+	private armletPhase = 0
 
 	private abuseArmlet() {
 		if (Sleeper.Sleeping) {
@@ -57,7 +68,7 @@ class MyMenu {
 
 		me.CastToggle(arm)
 		Sleeper.Sleep(600)
-		me.CastToggle(arm)
+		this.armletPhase = 1
 	}
 
 }
