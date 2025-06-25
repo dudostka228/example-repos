@@ -4,7 +4,8 @@ import {
 	Modifier,
 	LocalPlayer,
 	item_armlet,
-	TickSleeper
+	TickSleeper,
+	EntityManager
  } from "github.com/octarine-public/wrapper/index"
 
 const Sleeper = new TickSleeper()
@@ -15,8 +16,8 @@ class MyMenu {
 
 	constructor() {
 		const entry = Menu.AddEntry("Armlet Abuse")
-		const node = entry.AddNode("Settings")	
-		node.SortNodes = false
+		// const node = entry.AddNode("Settings")	
+		// node.SortNodes = false
 
 		this.State = entry.AddToggle("Enable", true)
 
@@ -30,7 +31,7 @@ class MyMenu {
 		  return
 		}
 	
-		const me   = LocalPlayer?.Hero
+		const me   = LocalPlayer
 		if (!me?.Hero || !me.Hero.IsAlive) {
 		  return
 		}
