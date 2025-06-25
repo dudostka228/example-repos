@@ -13,7 +13,7 @@ const Sleeper = new TickSleeper()
 class MyMenu {
 	public readonly State: Menu.Toggle
 	private readonly HealthThreshold: Menu.Slider
-	private CurrentPhase: "idle" | "reset" = "idle"
+	private abuseState = 0
 
 	constructor() {
 		const entry = Menu.AddEntry("Armlet Abuse")
@@ -29,35 +29,32 @@ class MyMenu {
 		const me = LocalPlayer?.Hero
 		if (!me || !me.IsAlive) return
 
+		const arm = me.GetItemByClass(item_armlet)
+		if (!arm || !arm.CanBeCasted()) {
+		  return
+		}
+		
 		const hp = me.HP
 		const threshold = this.HealthThreshold.value
-		const arm = me.GetItemByClass(item_armlet)
-		if (!arm || !arm.CanBeCasted()) return
 
-		const armletOn = arm.ToggledOn
-
-		if (hp < threshold) {
-			this.CurrentPhase = "idle"
-			if (!armletOn) {
-				me.CastToggle(arm)
-				Sleeper.Sleep(200)
-			}
+		if (hp < threshold && this.abuseState === 0) {
+			me.CastToggle(arm) // on
+			Sleeper.Sleep(600)
+			this.abuseState = 1
 			return
 		}
-
-		if (hp >= threshold && this.CurrentPhase !== "reset") {
-			this.CurrentPhase = "reset"
-			if (armletOn) {
-				me.CastToggle(arm) // off
-				Sleeper.Sleep(600)
-				setTimeout(() => {
-					const refreshed = LocalPlayer?.Hero?.GetItemByClass(item_armlet)
-					if (refreshed && refreshed.CanBeCasted()) {
-						LocalPlayer.Hero.CastToggle(refreshed) // on
-					}
-				}, 600)
-			}
-			return
+		
+		if (hp >= threshold && this.abuseState === 1) {
+			me.CastToggle(arm) // off
+			Sleeper.Sleep(600)
+			setTimeout(() => {
+				const hero = LocalPlayer?.Hero
+				const newArm = hero?.GetItemByClass(item_armlet)
+				if (hero && newArm && newArm.CanBeCasted()) {
+					hero.CastToggle(newArm) // off
+					this.abuseState = 0
+				}
+			}, 600)
 		}
 	}
 }
