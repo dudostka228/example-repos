@@ -38,7 +38,7 @@ class MyMenu {
 		}
 		console.log("4")
 		const me = LocalPlayer?.Hero
-		if (!me?.Hero || !me.Hero.IsAlive) {
+		if (!me || !me.IsAlive) {
 			return
 		}
 		console.log("5")
