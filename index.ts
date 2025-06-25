@@ -37,7 +37,7 @@ class MyMenu {
 		const threshold = this.HealthThreshold.value
 		const isArmletActive = arm.IsToggled
 
-        if (hp <= threshold && !isArmletActive) {
+        if (hp < threshold && !isArmletActive) {
             me.CastToggle(arm)
             Sleeper.Sleep(600)
             return
