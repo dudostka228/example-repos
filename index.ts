@@ -20,13 +20,13 @@ class MyMenu {
 		// node.SortNodes = false
 
 		this.State = entry.AddToggle("Enable", true)
-		this.State.OnValue(() => {
-			this.OnUpdate()
-		})
+		// this.State.OnValue(() => {
+		// 	this.OnUpdate()
+		// })
 
 		this.HealthThreshold = entry.AddSlider("HP Count", 400, 1, 500, 0)
 
-		EventsSDK
+		EventsSDK.on("PostDataUpdate", this.OnUpdate.bind(this))
 	}
 
 	private OnUpdate() {
