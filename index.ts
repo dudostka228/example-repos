@@ -36,7 +36,7 @@ class MyMenu {
 		  return
 		}
 	
-		const hpPct = (me.HP / me.MaxHP) * 100
+		const hpPct = me.HP
 		if (hpPct <= this.HealthThreshold.value) {
 		  this.abuseArmlet()
 		}
@@ -52,7 +52,7 @@ class MyMenu {
 		}
 	}
 	
-	  private abuseArmlet() {
+	private abuseArmlet() {
 		if (Sleeper.Sleeping) {
 		  return
 		}
@@ -64,14 +64,14 @@ class MyMenu {
 		}
 	
 		me.CastToggle(arm)
-		const cdMs = arm.ToggleCooldown * 1000
-		const buffDelayMs = 600
-		const totalDelay = cdMs + buffDelayMs
+		// const cdMs = arm.ToggleCooldown * 1000
+		// const buffDelayMs = 600
+		// const totalDelay = cdMs + buffDelayMs
 	
-		Sleeper.Sleep(totalDelay)
+		// Sleeper.Sleep(totalDelay)
 	
 		me.CastToggle(arm)
-	  }
+	}
 }
 	
 new MyMenu()
