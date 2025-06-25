@@ -56,6 +56,7 @@ class MyMenu {
 		console.log(me, " ", arm)
 
 		me.CastToggle(arm)
+		Sleeper.Sleep(600)
 		me.CastToggle(arm)
 	}
 
