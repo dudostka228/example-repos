@@ -5,15 +5,18 @@ import {
 	LocalPlayer,
 	item_armlet,
 	TickSleeper,
-	EntityManager
+	EntityManager,
+	modifier_item_armlet_unholy_strength
  } from "github.com/octarine-public/wrapper/index"
 
 const Sleeper = new TickSleeper()
 
+const mods = EntityManager.GetEntitiesByClass(modifier_item_armlet_unholy_strength);
+const hasArmletMod = mods.some(mod => mod.Parent === LocalPlayer);
+
 class MyMenu {
 	public readonly State: Menu.Toggle
 	private readonly HealthThreshold: Menu.Slider
-	private abuseState = 0
 
 	constructor() {
 		const entry = Menu.AddEntry("Armlet Abuse")
@@ -37,26 +40,20 @@ class MyMenu {
 		const hp = me.HP
 		const threshold = this.HealthThreshold.value
 
-		if (hp < threshold && this.abuseState === 0) {
-			me.CastToggle(arm) // on
-			Sleeper.Sleep(600)
-			this.abuseState = 1
-			return
-		}
-		
-		if (hp >= threshold && this.abuseState === 1) {
-			me.CastToggle(arm) // off
-			Sleeper.Sleep(600)
-			setTimeout(() => {
-				const hero = LocalPlayer?.Hero
-				const newArm = hero?.GetItemByClass(item_armlet)
-				if (hero && newArm && newArm.CanBeCasted()) {
-					hero.CastToggle(newArm) // off
-					this.abuseState = 0
-				}
-			}, 600)
-		}
+        if (hp <= threshold && hasArmletMod) {
+            arm.CastToggle()
+            Sleeper.Sleep(600)
+            return
+        }
+
+
+        if (hp > threshold && !hasArmletMod) {
+            arm.CastToggle()
+            Sleeper.Sleep(600)
+            return
+        }
 	}
 }
+
 	
 new MyMenu()
