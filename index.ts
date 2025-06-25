@@ -25,6 +25,8 @@ class MyMenu {
 		})
 
 		this.HealthThreshold = entry.AddSlider("HP Count", 400, 1, 500, 0)
+
+		EventsSDK
 	}
 
 	private OnUpdate() {
@@ -38,7 +40,8 @@ class MyMenu {
 		}
 
 		const HPThreshold = me.HP
-		if (this.HealthThreshold.value >= HPThreshold) {
+		console.log(HPThreshold)
+		if (400 >= HPThreshold) {
 			this.abuseArmlet()
 		}
 	}
