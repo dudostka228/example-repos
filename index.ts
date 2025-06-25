@@ -34,8 +34,12 @@ class MyMenu {
 		}
 		
 		const hp = me.HP
+		
+		const heroAnimations = me.Animations
+		console.log(heroAnimations)
+
 		const threshold = this.HealthThreshold.value
-		const isActive = arm.IsToggled
+		// const isActive = arm.IsToggled
 
 		if (hp <= threshold ) {
 			me.CastToggle(arm)
