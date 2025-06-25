@@ -20,58 +20,43 @@ class MyMenu {
 		// node.SortNodes = false
 
 		this.State = entry.AddToggle("Enable", true)
+		this.State.OnValue(() => {
+			this.OnUpdate()
+		})
 
 		this.HealthThreshold = entry.AddSlider("HP Count", 400, 1, 500, 0)
+	}
 
-		EventsSDK.on("PostDataUpdate", this.onUpdate.bind(this))
-		EventsSDK.on("ModifierCreated", this.onModifierCreated.bind(this))
-	}
-	private onUpdate(delta: number) {
-		if (delta === 0 || !this.State.value || Sleeper.Sleeping) {
-		  return
+	private OnUpdate() {
+		if (!this.State.value || Sleeper.Sleeping) {
+			return
 		}
-	
-		const me   = LocalPlayer
+
+		const me = LocalPlayer?.Hero
 		if (!me?.Hero || !me.Hero.IsAlive) {
-		  return
+			return
 		}
-	
-		const hpPct = me.HP
-		if (hpPct <= this.HealthThreshold.value) {
-		  this.abuseArmlet()
-		}
-	  }
-	
-	private onModifierCreated(mod: Modifier) {
-		if (!this.State.value) {
-		  return
-		}
-	
-		if (typeof (mod as any).IsDebuff === "function" && (mod as any).IsDebuff()) {
-		  this.abuseArmlet()
+
+		const HPThreshold = me.HP
+		if (this.HealthThreshold.value >= HPThreshold) {
+			this.abuseArmlet()
 		}
 	}
-	
+
 	private abuseArmlet() {
 		if (Sleeper.Sleeping) {
-		  return
+			return
 		}
-	
+
 		const me   = LocalPlayer?.Hero
 		const arm = me.GetItemByClass(item_armlet)
 		if (!arm || !arm.CanBeCasted()) {
 		  return
 		}
-	
-		me.CastToggle(arm)
-		// const cdMs = arm.ToggleCooldown * 1000
-		// const buffDelayMs = 600
-		// const totalDelay = cdMs + buffDelayMs
-	
-		// Sleeper.Sleep(totalDelay)
-	
-		me.CastToggle(arm)
+
+		console.log(me, " ", arm)
 	}
+
 }
 	
 new MyMenu()
