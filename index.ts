@@ -47,8 +47,7 @@ class MyMenu {
 		}
 
 		const HPThreshold = me.HP
-		console.log(HPThreshold)
-		if (400 >= HPThreshold) {
+		if (this.HealthThreshold.value >= HPThreshold) {
 			this.abuseArmlet()
 		}
 	}
