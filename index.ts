@@ -4,7 +4,8 @@ import {
 	Modifier,
 	LocalPlayer,
 	item_armlet,
-	TickSleeper
+	TickSleeper,
+	Hero
  } from "github.com/octarine-public/wrapper/index"
 
 const Sleeper = new TickSleeper()
@@ -36,20 +37,19 @@ class MyMenu {
 		const threshold = this.HealthThreshold.value
 		const isArmletActive = arm.IsToggled
 
-        if (hp <= threshold && isArmletActive) {
+        if (hp <= threshold && !isArmletActive) {
             me.CastToggle(arm)
             Sleeper.Sleep(600)
             return
         }
 
 
-        if (hp > threshold && !isArmletActive) {
+        if (hp > threshold && isArmletActive) {
             me.CastToggle(arm)
             Sleeper.Sleep(600)
             return
         }
 	}
 }
-
 	
 new MyMenu()
