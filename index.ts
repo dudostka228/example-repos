@@ -37,14 +37,14 @@ class MyMenu {
 		const isArmletActive = arm.IsToggled
 
         if (hp <= threshold && isArmletActive) {
-            arm.CastToggle()
+            me.CastToggle(arm)
             Sleeper.Sleep(600)
             return
         }
 
 
         if (hp > threshold && !isArmletActive) {
-            arm.CastToggle()
+            me.CastToggle(arm)
             Sleeper.Sleep(600)
             return
         }
