@@ -4,18 +4,10 @@ import {
 	Modifier,
 	LocalPlayer,
 	item_armlet,
-	TickSleeper,
-	EntityManager
+	TickSleeper
  } from "github.com/octarine-public/wrapper/index"
 
 const Sleeper = new TickSleeper()
-const ARMLET_MODIFIER = item_armlet.ModifierName // "modifier_item_armlet_unholy_strength"
-
-function hasModifier(unit: any, modifierName: string): boolean {
-  return EntityManager.GetEntitiesByClass(Modifier).some(mod =>
-    mod.Name === modifierName && mod.Parent === unit
-  )
-}
 
 class MyMenu {
 	public readonly State: Menu.Toggle
@@ -42,17 +34,16 @@ class MyMenu {
 		
 		const hp = me.HP
 		const threshold = this.HealthThreshold.value
+		const isArmletActive = arm.IsToggled
 
-		const hasArmletMod = hasModifier(me, ARMLET_MODIFIER)
-
-        if (hp <= threshold && hasArmletMod) {
+        if (hp <= threshold && isArmletActive) {
             arm.CastToggle()
             Sleeper.Sleep(600)
             return
         }
 
 
-        if (hp > threshold && !hasArmletMod) {
+        if (hp > threshold && !isArmletActive) {
             arm.CastToggle()
             Sleeper.Sleep(600)
             return
