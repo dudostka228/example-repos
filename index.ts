@@ -34,9 +34,9 @@ class MyMenu {
 		}
 		
 		const hp = me.HP
-		
-		const heroAnimations = me.Animations
-		console.log(heroAnimations)
+		console.log(me.Animations, "Array anim")
+		console.log(me.GetAnimationID, "Anim ID")
+		console.log(me.GetAnimation, "Anim name ?")
 
 		const threshold = this.HealthThreshold.value
 		// const isActive = arm.IsToggled
