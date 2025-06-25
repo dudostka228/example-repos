@@ -33,7 +33,7 @@ class MyMenu {
 	}
 
 	private OnUpdate() {
-		if (!this.State.value || Sleeper.Sleeping) {
+		if (!this.State.value) {
 			return
 		}
 		console.log("4")
