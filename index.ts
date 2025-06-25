@@ -23,7 +23,7 @@ class MyMenu {
 	}
 
 	private OnUpdate() {
-		if (!this.State.value || Sleeper.Sleeping) return
+		if (!this.State.value) return
 
 		const me = LocalPlayer?.Hero
 		if (!me || !me.IsAlive) return
@@ -35,7 +35,7 @@ class MyMenu {
 		
 		const hp = me.HP
 		const threshold = this.HealthThreshold.value
-		const isArmletActive = arm.IsToggled
+		const isActive = arm.IsToggled
 
 		if (hp <= threshold && !Sleeper.Sleeping) {
 			me.CastToggle(arm)
