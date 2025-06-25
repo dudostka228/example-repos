@@ -13,63 +13,53 @@ const Sleeper = new TickSleeper()
 class MyMenu {
 	public readonly State: Menu.Toggle
 	private readonly HealthThreshold: Menu.Slider
+	private CurrentPhase: "idle" | "reset" = "idle"
 
 	constructor() {
 		const entry = Menu.AddEntry("Armlet Abuse")
-		// const node = entry.AddNode("Settings")	
-		// node.SortNodes = false
 		this.State = entry.AddToggle("Enable", true)
-		// this.State.OnValue(() => {
-		// 	this.OnUpdate()
-		// })
-
 		this.HealthThreshold = entry.AddSlider("HP Count", 400, 1, 500, 0)
-
 		EventsSDK.on("PostDataUpdate", this.OnUpdate.bind(this))
 
 	}
 
 	private OnUpdate() {
-		if (!this.State.value) {
-			return
-		}
+		if (!this.State.value || Sleeper.Sleeping) return
+
 		const me = LocalPlayer?.Hero
-		if (!me || !me.IsAlive) {
-			return
-		}
+		if (!me || !me.IsAlive) return
 
-		if (this.armletPhase === 1 && !Sleeper.Sleeping) {
-			const arm = me.GetItemByClass(item_armlet)
-			if (arm && arm.CanBeCasted()) {
-				me.CastToggle(arm)
-			}
-			this.armletPhase = 0
-		}
-
-		const HPThreshold = me.HP
-		if (this.HealthThreshold.value >= HPThreshold) {
-			this.abuseArmlet()
-		}
-	}
-
-	private armletPhase = 0
-
-	private abuseArmlet() {
-		if (Sleeper.Sleeping) {
-			return
-		}
-		const me   = LocalPlayer?.Hero
+		const hp = me.HP
+		const threshold = this.HealthThreshold.value
 		const arm = me.GetItemByClass(item_armlet)
-		if (!arm || !arm.CanBeCasted()) {
-		  return
+		if (!arm || !arm.CanBeCasted()) return
+
+		const armletOn = arm.ToggledOn
+
+		if (hp < threshold) {
+			this.CurrentPhase = "idle"
+			if (!armletOn) {
+				me.CastToggle(arm)
+				Sleeper.Sleep(200)
+			}
+			return
 		}
-		console.log(me, " ", arm)
 
-		me.CastToggle(arm)
-		Sleeper.Sleep(600)
-		this.armletPhase = 1
+		if (hp >= threshold && this.CurrentPhase !== "reset") {
+			this.CurrentPhase = "reset"
+			if (armletOn) {
+				me.CastToggle(arm) // off
+				Sleeper.Sleep(600)
+				setTimeout(() => {
+					const refreshed = LocalPlayer?.Hero?.GetItemByClass(item_armlet)
+					if (refreshed && refreshed.CanBeCasted()) {
+						LocalPlayer.Hero.CastToggle(refreshed) // on
+					}
+				}, 600)
+			}
+			return
+		}
 	}
-
 }
 	
 new MyMenu()
