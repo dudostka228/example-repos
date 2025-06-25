@@ -70,10 +70,7 @@ class MyMenu {
 	
 		Sleeper.Sleep(totalDelay)
 	
-		setTimeout(() => {
-		  me.CastToggle(arm)
-		  Sleeper.Sleep(200)
-		}, totalDelay)
+		me.CastToggle(arm)
 	  }
 }
 	
