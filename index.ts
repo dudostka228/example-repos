@@ -46,7 +46,7 @@ class MyMenu {
 	
 		for (const e of enemies) {
 		  const attackID = e.GetAnimation(GameActivity.ACT_DOTA_ATTACK)
-		  if (attackID === undefined) continue
+		  if ((attackID === undefined) || !attackID) continue
 	
 		  const elapsed = e.AnimationTime
 	
@@ -64,7 +64,7 @@ class MyMenu {
 	
 		  const arrival = remainingAnim + travel
 		  console.log(
-			`[PREDICT] ${e.Name} атакует ${me.Name}: ` +
+			`[PREDICT] ${e.Name} → ${me.Name}: ` +
 			`анимация закончится через ${remainingAnim.toFixed(2)}с, ` +
 			`${speed>0 ? `снаряд полетит ещё ${travel.toFixed(2)}с, ` : ""}` +
 			`итого попадание через ${arrival.toFixed(2)}с`
