@@ -1,12 +1,12 @@
 import { 
 	EventsSDK,
 	Menu,
-	Modifier,
 	LocalPlayer,
 	item_armlet,
 	TickSleeper,
-	Hero,
-	GameActivity
+	GameActivity,
+	GameRules,
+	EntityManager
  } from "github.com/octarine-public/wrapper/index"
 
 const Sleeper = new TickSleeper()
@@ -15,6 +15,7 @@ class MyMenu {
 	public readonly State: Menu.Toggle
 	private readonly HealthThreshold: Menu.Slider
 	private readonly keybind: Menu.KeyBind
+	private readonly range = 1200
 
 	constructor() {
 		const entry = Menu.AddEntry("Armlet Abuse")
@@ -24,9 +25,52 @@ class MyMenu {
 		this.keybind.OnPressed(() => this.logAnims())
 		this.keybind = entry.AddKeybind("Raw Anim Log")
 		this.keybind.OnPressed(() => this.logRawAnims())
+		this.State = entry.AddToggle("Attack Anim Predictor")
+		this.State.OnActivate(() => this.OnTick())
 		EventsSDK.on("PostDataUpdate", this.OnUpdate.bind(this))
+		EventsSDK.on("PostDataUpdate", this.OnTick.bind(this))
 
 	}
+	private OnTick() {
+	
+		const me = LocalPlayer?.Hero
+		if (!me || !me.IsAlive) return
+	
+		const enemies = EntityManager.AllEntities.filter(ent =>
+		  ent.IsAlive &&
+		  ent.ClassName.startsWith("CDOTA_Unit_Hero_") &&
+		  ent.IsEnemy(me) &&
+		  ent.Distance2D(me) <= this.range
+		)
+	
+		for (const e of enemies) {
+		  const attackID = e.GetAnimationID(GameActivity.ACT_DOTA_ATTACK)
+		  if (attackID === undefined) continue
+	
+		  const elapsed = e.AnimationTime
+	
+		  const anim = e.Animations[attackID]
+		  const total = anim.frameCount / anim.fps
+	
+		  const remainingAnim = Math.max(total - elapsed, 0)
+	
+		  let travel = 0
+		  const speed = (e as any).BaseAttackProjectileSpeed
+		  if (speed && speed > 0) {
+			const dist = e.Distance2D(me)
+			travel = dist / speed
+		  }
+	
+		  const arrival = remainingAnim + travel
+		  console.log(
+			`[PREDICT] ${e.Name} атакует ${me.Name}: ` +
+			`анимация закончится через ${remainingAnim.toFixed(2)}с, ` +
+			`${speed>0 ? `снаряд полетит ещё ${travel.toFixed(2)}с, ` : ""}` +
+			`итого попадание через ${arrival.toFixed(2)}с`
+		  )
+		}
+	  }
+
 	private logAnims() {
 		const me = LocalPlayer?.Hero
 		if (!me) {
@@ -39,18 +83,11 @@ class MyMenu {
 		  }
 	
 		const attackID = me.GetAnimationID(GameActivity.ACT_DOTA_ATTACK)
-		const idleID   = me.GetAnimationID(GameActivity.ACT_DOTA_IDLE)
 	
 		console.log(`GetAnimationID ACT_DOTA_ATTACK => ${attackID}`)
 		if (attackID !== undefined) {
 		  const attackAnim = me.GetAnimation(GameActivity.ACT_DOTA_ATTACK)!
 		  console.log(`  Attack anim data: fps=${attackAnim.fps}, frames=${attackAnim.frameCount}`)
-		}
-	
-		console.log(`GetAnimationID ACT_DOTA_IDLE => ${idleID}`)
-		if (idleID !== undefined) {
-		  const idleAnim = me.GetAnimation(GameActivity.ACT_DOTA_IDLE)!
-		  console.log(`  Idle anim data: fps=${idleAnim.fps}, frames=${idleAnim.frameCount}`)
 		}
 	
 		if (attackID !== undefined) {
