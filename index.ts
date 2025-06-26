@@ -45,14 +45,11 @@ class MyMenu {
 		)
 	
 		for (const e of enemies) {
-		  const attackID = e.GetAnimation(GameActivity.ACT_DOTA_ATTACK)
-		  if (!attackID) continue
+		  const attackAnim = e.GetAnimation(GameActivity.ACT_DOTA_ATTACK)
+		  if (!attackAnim) continue
 	
 		  const elapsed = e.AnimationTime
-	
-		//   const anim = e.Animations[attackID]
-		  const total = attackID.frameCount / attackID.fps
-	
+		  const total = attackAnim.frameCount / attackAnim.fps
 		  const remainingAnim = Math.max(total - elapsed, 0)
 	
 		  let travel = 0
@@ -88,6 +85,7 @@ class MyMenu {
 		if (attackID !== undefined) {
 		  const attackAnim = me.GetAnimation(GameActivity.ACT_DOTA_ATTACK)!
 		  console.log(`  Attack anim data: fps=${attackAnim.fps}, frames=${attackAnim.frameCount}`)
+		  console.log(attackAnim)
 		}
 	
 		if (attackID !== undefined) {
