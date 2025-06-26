@@ -16,6 +16,7 @@ class MyMenu {
 	private readonly HealthThreshold: Menu.Slider
 	private readonly keybind: Menu.KeyBind
 	private readonly range = 1200
+	private readonly handled = new Map<number, number>()
 
 	constructor() {
 		const entry = Menu.AddEntry("Armlet Abuse")
@@ -45,13 +46,19 @@ class MyMenu {
 		)
 	
 		for (const e of enemies) {
-		  const attackAnim = e.GetAnimation(GameActivity.ACT_DOTA_ATTACK)
-		  if (!attackAnim) continue
+		  const animID  = e.GetAnimationID(GameActivity.ACT_DOTA_ATTACK)
+		  if (animID === undefined) {
+			this.handled.delete(e.Handle)
+			continue
+		  }
 	
-		  const elapsed = e.AnimationTime
-		  if (elapsed > 1 / attackAnim.fps) continue
+		  const prevID = this.handled.get(e.Handle)
+		  if (animID === prevID) continue
+		  this.handled.set(e.Handle, animID)
 
-		  const total = attackAnim.frameCount / attackAnim.fps
+		  const animData = e.Animations[animID]
+		  const elapsed = e.AnimationTime
+		  const total = animData.frameCount / animData.fps
 		  const remainingAnim = Math.max(total - elapsed, 0)
 		  const speed = (e as any).BaseAttackProjectileSpeed || 0
 		  const travel = speed > 0 ? e.Distance2D(me) / speed : 0
