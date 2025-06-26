@@ -14,7 +14,7 @@ const Sleeper = new TickSleeper()
 class MyMenu {
 	public readonly State: Menu.Toggle
 	private readonly HealthThreshold: Menu.Slider
-	private readonly keybind: Menu.Keybind
+	private readonly keybind: Menu.KeyBind
 
 	constructor() {
 		const entry = Menu.AddEntry("Armlet Abuse")
@@ -77,13 +77,18 @@ class MyMenu {
 		const hp = me.HP
 
 		const threshold = this.HealthThreshold.value
-		// const isActive = arm.IsToggled
+		const isActive = arm.IsToggled
 
-		if (hp <= threshold ) {
-			me.CastToggle(arm)
-			me.CastToggle(arm)
+		if (hp <= threshold) {
+			if (isActive) {
+			  me.CastToggle(arm)
+			  me.CastToggle(arm)
+			} else {
+			  me.CastToggle(arm)
+			}
 			Sleeper.Sleep(600)
-		}
+		  }
+
 	}
 }
 	
