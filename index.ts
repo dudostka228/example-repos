@@ -27,11 +27,16 @@ class MyMenu {
 		this.keybind.OnPressed(() => this.logRawAnims())
 		this.State = entry.AddToggle("Attack Anim Predictor")
 		this.State.OnActivate(() => EventsSDK.on("PostDataUpdate", this.OnTick.bind(this)))
+		this.State.OnDeactivate(() => this.enabled = !this.enabled)
 		EventsSDK.on("PostDataUpdate", this.OnUpdate.bind(this))
 
 	}
+
+	private enabled = false
+
 	private OnTick() {
-	
+		if (!this.enabled) return
+
 		const me = LocalPlayer?.Hero
 		if (!me || !me.IsAlive) return
 	
