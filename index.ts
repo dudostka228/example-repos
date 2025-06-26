@@ -57,9 +57,8 @@ class MyMenu {
 	
 		  let travel = 0
 		  const speed = (e as any).BaseAttackProjectileSpeed
-		  if (speed && speed > 0) {
-			const dist = e.Distance2D(me)
-			travel = dist / speed
+		  if (speed > 0) {
+			travel = e.Distance2D(me) / speed
 		  }
 	
 		  const arrival = remainingAnim + travel
