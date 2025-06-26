@@ -32,6 +32,10 @@ class MyMenu {
 		  return
 		}
 
+		if (!me.Animations || me.Animations.length === 0) {
+			console.log("Animations not loaded yet"); return
+		  }
+
 		console.log(`--- All raw animations for ${me.Name} (count: ${me.Animations.length}) ---`)
 		me.Animations.forEach((anim, i) => {
 		  const activities = anim.activities.map(a => `${a.name}(w=${a.weight})`).join(", ")
