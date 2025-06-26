@@ -26,9 +26,8 @@ class MyMenu {
 		this.keybind = entry.AddKeybind("Raw Anim Log")
 		this.keybind.OnPressed(() => this.logRawAnims())
 		this.State = entry.AddToggle("Attack Anim Predictor")
-		this.State.OnActivate(() => this.OnTick())
+		this.State.OnActivate(() => EventsSDK.on("PostDataUpdate", this.OnTick.bind(this)))
 		EventsSDK.on("PostDataUpdate", this.OnUpdate.bind(this))
-		EventsSDK.on("PostDataUpdate", this.OnTick.bind(this))
 
 	}
 	private OnTick() {
