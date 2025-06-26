@@ -49,15 +49,12 @@ class MyMenu {
 		  if (!attackAnim) continue
 	
 		  const elapsed = e.AnimationTime
+		  if (elapsed > 1 / attackAnim.fps) continue
+
 		  const total = attackAnim.frameCount / attackAnim.fps
 		  const remainingAnim = Math.max(total - elapsed, 0)
-	
-		  let travel = 0
-		  const speed = (e as any).BaseAttackProjectileSpeed
-		  if (speed > 0) {
-			travel = e.Distance2D(me) / speed
-		  }
-	
+		  const speed = (e as any).BaseAttackProjectileSpeed || 0
+		  const travel = speed > 0 ? e.Distance2D(me) / speed : 0
 		  const arrival = remainingAnim + travel
 		  console.log(
 			`[PREDICT] ${e.Name} → ${me.Name}: ` +
