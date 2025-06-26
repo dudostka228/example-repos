@@ -50,8 +50,8 @@ class MyMenu {
 	
 		  const elapsed = e.AnimationTime
 	
-		  const anim = e.Animations[attackID]
-		  const total = anim.frameCount / anim.fps
+		//   const anim = e.Animations[attackID]
+		  const total = attackID.frameCount / attackID.fps
 	
 		  const remainingAnim = Math.max(total - elapsed, 0)
 	
