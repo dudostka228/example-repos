@@ -46,7 +46,7 @@ class MyMenu {
 	
 		for (const e of enemies) {
 		  const attackID = e.GetAnimation(GameActivity.ACT_DOTA_ATTACK)
-		  if ((attackID === undefined) || !attackID) continue
+		  if (!attackID) continue
 	
 		  const elapsed = e.AnimationTime
 	
