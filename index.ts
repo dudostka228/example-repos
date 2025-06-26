@@ -20,8 +20,10 @@ class MyMenu {
 		const entry = Menu.AddEntry("Armlet Abuse")
 		this.State = entry.AddToggle("Enable", true)
 		this.HealthThreshold = entry.AddSlider("HP Count", 400, 1, 500, 0)
-		this.keybind = entry.AddKeybind("Log Animations")
+		this.keybind = entry.AddKeybind("GetAnim(ID) Log")
 		this.keybind.OnPressed(() => this.logAnims())
+		this.keybind = entry.AddKeybind("Raw Anim Log")
+		this.keybind.OnPressed(() => this.logRawAnims())
 		EventsSDK.on("PostDataUpdate", this.OnUpdate.bind(this))
 
 	}
@@ -35,12 +37,6 @@ class MyMenu {
 		if (!me.Animations || me.Animations.length === 0) {
 			console.log("Animations not loaded yet"); return
 		  }
-
-		console.log(`--- All raw animations for ${me.Name} (count: ${me.Animations.length}) ---`)
-		me.Animations.forEach((anim, i) => {
-		  const activities = anim.activities.map(a => `${a.name}(w=${a.weight})`).join(", ")
-		  console.log(`#${i}: fps=${anim.fps}, frames=${anim.frameCount}, activities=[${activities}]`)
-		})
 	
 		const attackID = me.GetAnimationID(GameActivity.ACT_DOTA_ATTACK)
 		const idleID   = me.GetAnimationID(GameActivity.ACT_DOTA_IDLE)
@@ -65,6 +61,24 @@ class MyMenu {
 		  )
 		  console.log(`attach_hitloc at mid-attack: ${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}, ${pos.z.toFixed(1)}`)
 		}
+	}
+
+	private logRawAnims() {
+		const me = LocalPlayer?.Hero
+		if (!me) {
+		  console.log("No hero entity")
+		  return
+		}
+
+		if (!me.Animations || me.Animations.length === 0) {
+			console.log("Animations not loaded yet"); return
+		  }
+
+		console.log(`--- All raw animations for ${me.Name} (count: ${me.Animations.length}) ---`)
+		me.Animations.forEach((anim, i) => {
+		  const activities = anim.activities.map(a => `${a.name}(w=${a.weight})`).join(", ")
+		  console.log(`#${i}: fps=${anim.fps}, frames=${anim.frameCount}, activities=[${activities}]`)
+		})
 	}
 
 	private OnUpdate() {
