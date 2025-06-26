@@ -32,7 +32,7 @@ class MyMenu {
 	}
 
 	private OnTick() {
-		if (!this.State.value || Sleeper.Sleeping) return
+		if (!this.State.value) return
 
 		const me = LocalPlayer?.Hero
 		if (!me || !me.IsAlive) return
@@ -45,7 +45,7 @@ class MyMenu {
 		)
 	
 		for (const e of enemies) {
-		  const attackID = e.GetAnimationID(GameActivity.ACT_DOTA_ATTACK)
+		  const attackID = e.GetAnimation(GameActivity.ACT_DOTA_ATTACK)
 		  if (attackID === undefined) continue
 	
 		  const elapsed = e.AnimationTime
