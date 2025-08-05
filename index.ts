@@ -5,7 +5,6 @@ import {
 	item_armlet,
 	TickSleeper,
 	GameActivity,
-	GameRules,
 	EntityManager
  } from "github.com/octarine-public/wrapper/index"
 
